@@ -6,7 +6,14 @@ if ! (return 0 2>/dev/null); then
   exit 1
 fi
 
-TOOLS_VENV="${HOME}/Documents/VSMods/.codex-tools/venv"
+TOOLS_VENV="${VIRTUAL_ENV:-}"
+if [ -z "${TOOLS_VENV}" ]; then
+  if [ -d "${HOME}/Documents/VSMods/.image-tools/venv" ]; then
+    TOOLS_VENV="${HOME}/Documents/VSMods/.image-tools/venv"
+  else
+    TOOLS_VENV="${HOME}/Documents/VSMods/.codex-tools/venv"
+  fi
+fi
 VENV_BIN="${TOOLS_VENV}/bin"
 
 if command -v deactivate >/dev/null 2>&1; then
@@ -23,4 +30,4 @@ else
   unset VIRTUAL_ENV
 fi
 
-echo "Codex image tools deactivated."
+echo "Shared image tools deactivated."

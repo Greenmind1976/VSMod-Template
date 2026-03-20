@@ -1,22 +1,34 @@
 # VSMod Template
 
-Starter template for Vintage Story mod projects with a reusable local toolchain for texture/script workflows.
+Bootstrap helper for Vintage Story mod projects with a reusable local toolchain for texture/script workflows.
+
+This repo is not itself a buildable mod skeleton. It is a helper repo that:
+
+- installs shared local tooling once
+- creates a new mod from the official Vintage Story templates
+- bootstraps the extra files you usually want in a real repo
 
 ## Included
 
-- `setup-codex-image-tools.sh`
+- `setup-image-tools.sh`
   - Installs shared tools outside project repos:
     - Homebrew: `python`, `imagemagick`, `ffmpeg`
-    - Python venv at `~/Documents/VSMods/.codex-tools/venv`
+    - Python venv at `~/Documents/VSMods/.image-tools/venv`
     - Python packages: `pillow`, `numpy`
 - `activate-tools.sh`
   - Activates the shared venv in the current shell.
+- `bootstrap-mod.sh`
+  - Adds starter repo files after `dotnet new`
+  - Creates `VERSION`, `RELEASE_NOTES.md`, `TODO.md`, `.gitignore`, `README.md`, and `release.sh` when missing.
+- `new-mod.sh`
+  - Wraps `dotnet new vsmod` / `vsmoddll`
+  - Runs the bootstrap step automatically
 
 ## Why this layout
 
-You asked to keep tooling out of each mod repo. This template installs tools once in a shared folder:
+You asked to keep tooling out of each mod repo. This helper installs tools once in a shared folder:
 
-- `~/Documents/VSMods/.codex-tools`
+- `~/Documents/VSMods/.image-tools`
 
 Any mod repo can reuse the same environment.
 
@@ -25,8 +37,8 @@ Any mod repo can reuse the same environment.
 From this repo:
 
 ```bash
-chmod +x setup-codex-image-tools.sh activate-tools.sh
-./setup-codex-image-tools.sh
+chmod +x setup-image-tools.sh activate-tools.sh
+./setup-image-tools.sh
 ```
 
 ## Official VS project bootstrap (NuGet template)
@@ -95,10 +107,11 @@ Then tools are available:
 
 ## Suggested workflow for a new mod
 
-1. Use `dotnet new vsmod` (recommended) or this repo as your GitHub template.
+1. Run `./new-mod.sh MyMod`.
 2. Activate shared tools.
-3. Add texture scripts under `tools/textures/` in the mod repo.
-4. Run build/test loop (`dotnet build`, in-game validation).
+3. Update the generated `README.md`, `modinfo.json`, `VERSION`, and `RELEASE_NOTES.md`.
+4. Add texture scripts under `tools/textures/` in the mod repo if needed.
+5. Run build/test loop (`dotnet build`, in-game validation).
 
 ## Optional shell helper
 
@@ -119,6 +132,6 @@ vsmod-tools
 ## Notes
 
 - If `brew` is missing, install from <https://brew.sh/>.
-- `setup-codex-image-tools.sh` is idempotent; re-running is safe.
+- `setup-image-tools.sh` is idempotent; re-running is safe.
 - If Python packages break after system updates, rerun setup.
 - You can keep your existing direct DLL-reference `.csproj` workflow; the NuGet template is just the cleaner bootstrap.

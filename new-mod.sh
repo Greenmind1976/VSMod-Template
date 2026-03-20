@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Prevent leaking shell options when accidentally sourced.
 if (return 0 2>/dev/null); then
   echo "Run this script, do not source it:"
@@ -35,7 +37,7 @@ if ! command -v dotnet >/dev/null 2>&1; then
   exit 1
 fi
 
-if ! dotnet new list | rg -q "vsmod|vsmoddll"; then
+if ! dotnet new list | grep -Eq "vsmod|vsmoddll"; then
   echo "VintageStory templates not found. Installing..."
   dotnet new install VintageStory.Mod.Templates
 fi
@@ -63,6 +65,7 @@ if [ -e "$MOD_NAME" ]; then
 fi
 
 dotnet new "$TEMPLATE" -n "$MOD_NAME"
+/bin/bash "$SCRIPT_DIR/bootstrap-mod.sh" "$TARGET_DIR/$MOD_NAME"
 
 echo
 
@@ -70,3 +73,4 @@ echo "Created: $TARGET_DIR/$MOD_NAME"
 echo "Next steps:"
 echo "  cd \"$TARGET_DIR/$MOD_NAME\""
 echo "  dotnet build"
+echo "  ./release.sh"
